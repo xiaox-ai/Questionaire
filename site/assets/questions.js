@@ -1,6 +1,6 @@
 'use strict';
 window.SURVEY = {
- version: '2026-10-29-v1',
+ version: '2026-10-29-v2',
  title: '城市公园场景休闲消费意愿调查',
  videos: {
   C1: {title:'公园场景 C1',url:'https://good360vr.com/preview/?id=2115482624883'},
