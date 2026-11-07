@@ -38,13 +38,23 @@ assert.equal(C.frequencies.length,6);
 })().catch(e=>{console.error(e);process.exitCode=1});
 vm.runInContext(fs.readFileSync('site/assets/videos.js','utf8'),context);
 const videos=context.window.parseVideoCSV(fs.readFileSync('site/videos.csv','utf8'));
-assert.equal(videos.A1.mode,'flat');
-assert.ok(videos.A1.url.includes('q-signature='));
-assert.equal(videos.A2.url,'');
-assert.equal(videos.C1.mode,'iframe');
+// The deployed list is editable configuration: do not pin its URLs or modes.
+assert.ok(Object.keys(videos).length > 0, '视频清单至少需要一条记录');
+for (const [code, video] of Object.entries(videos)) {
+ assert.match(code, /^[A-M][1-9]$/);
+ assert.ok(['flat','360','iframe'].includes(video.mode));
+ if (video.url) {
+  assert.equal(new URL(video.url).protocol, 'https:');
+  assert.ok(!/\s/.test(video.url), code + ' 的链接不能含未编码空格');
+ }
+}
+const flatFixture=context.window.parseVideoCSV('视频编号,视频名称,视频链接,播放模式\nA1,普通视频,https://example.com/flat.mp4,flat\nA2,未配置,,flat\n');
+assert.equal(flatFixture.A1.mode,'flat');
+assert.equal(flatFixture.A2.url,'');
 const quoted=context.window.parseVideoCSV('\ufeff视频编号,视频名称,视频链接,播放模式\r\nA1,"公园, ""自然""",https://example.com/a.mp4,360\r\n');
 assert.equal(quoted.A1.title,'公园, "自然"');
 assert.equal(quoted.A1.mode,'360');
 assert.throws(()=>context.window.parseVideoCSV('视频编号,视频名称,视频链接\nA1,x,javascript:alert(1)'));
 assert.throws(()=>context.window.parseVideoCSV('视频编号,视频名称,视频链接\nA1,x,\nA1,y,'));
 console.log('PASS: CSV BOM, Excel quoting, URLs, modes, empty and duplicate entries.');
+
