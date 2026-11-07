@@ -1,5 +1,118 @@
 ﻿视频编号,视频名称,视频链接,播放模式
-A1,20250119-Liuhuahugongyuan-Xjy-60 0000,https://xiaoxai.top/20250119-Liuhuahugongyuan-Xjy-60%200000.mp4?q-sign-algorithm=sha1&q-ak=AKIDzrgdtJdu5lkDm7M3vTvGse3kAHUwQkGOGUP39nC84tHe-JUh4tD3dY1d0N-EZGOc&q-sign-time=1794029228;1794032828&q-key-time=1794029228;1794032828&q-header-list=host&q-url-param-list=&q-signature=504806094f5fdbdf3df29b60693b460f92ae6dad&x-cos-security-token=ikjc27e5MBwRlNmeoKFwblQxxQjeXMlade55eed8f1df6c4ed66b4fdc1b5d9a300GxbkBgoD9sCiU6LsZAzGsXLtU3nrYgV3CsNuoub1blF-PN9o0zo1nNMAU-tDr1at8kzIEfDl5dTNENuqeW4r9xPi4lmYp4v7770SA9JipxKNKbJQ-xBe4q5_cos1YGyGve-CbJwtQP3g6B5vmZabvg4rWEKslxAoOPVFTVY6aWpApsf32QBvirzcXgf_MRBwVrtL3jLakdWNpsSPXYhMY68dfxX7e_7utPbKFC_BbDwr8u_86Uk2SUxj7bswbackffOykKxVmUQhadDrINe3g,flat
-A2,20260725-Tianhegongyuan-Wyj-059 045,,flat
-C1,公园场景 C1,https://good360vr.com/preview/?id=2115482624883,iframe
-C2,公园场景 C2,https://good360vr.com/preview/?id=2115482624883,iframe
+A1,20250119-Liuhuahugongyuan-Xjy-60 0000,https://xiaoxai.top/20250119-Liuhuahugongyuan-Xjy-60%200000.mp4,360
+A2,20260725-Tianhegongyuan-Wyj-059 045,flat
+A3,20260725-Guangzhoushiertonggongyuan-Wxx-009 006
+A4,20250119-Liuhuahugongyuan-Xjy-60 0000
+A5,20260119-Luhugongyuan-Lzk-K32 028
+A6,20260118-Luhugongyuan-Xl-075 247
+A7,20250120-Yuexiugongyuan-Wxx-15 0000
+A8,20260805-Linjiangdaizhuanggongyuan-Lzk-012 006
+A9,20260711-Guangzhoufazhangongyuan-Ccy-019 028
+B1,20260725-Tianhegongyuan-Xl-063 012
+B2,20260724-Tianhegongyuan-Wxx-004 019
+B3	20260118-Luhugongyuan-Wxx-K5 017
+B4	20251024-Yunxizhiwuyuan-Xl-053 025
+B5	20251025-Yunxizhiwuyuan-Wxx-K3 041
+B6	20260729-Guangzhoushiertonggongyuan-Lzk-028 021
+B7	20250120-Yuexiugongyuan-Wxx-45 0014
+B8	20250120-Yuexiugongyuan-Wxx-01 0004
+B9	20250120-Yuexiugongyuan-Wxx-64 0011
+C1	20260805-Linjiangdaizhuanggongyuan-Lzk-218 026,https://good360vr.com/preview/?id=2115482624883,iframe
+C2	20260117-Chuanqigongyuan-Xl-014 004,https://good360vr.com/preview/?id=2115482624883,iframe
+C3	20260118-Luhugongyuan-Xl-060 016
+C4	20260725-Guangzhoushiertonggongyuan-Xl-040 020
+C5	20260724-Tianhegongyuan-Wyj-063 009
+C6	20260118-Luhugongyuan-Xl-K2 081
+C7	20260802-Yuntaigongyuan-Wyj-042 033
+C8	20260805-Linjiangdaizhuanggongyuan-Lzk-196 024
+C9	20260724-Tianhegongyuan-Xl-097 018
+D1	20250118-Liuhuahugongyuan-Xjy-082 0020
+D2	20250121-Yuexiugongyuan-Xjy-124 0006
+D3	20260119-Luhugongyuan-Lzk-025 038
+D4	20260801-Yunluozhiwuyuan-Lzk-059 014
+D5	20250118-Liuhuahugongyuan-Zwj-057-2 0002
+D6	20260119-Luhugongyuan-Xl-053 030
+D7	20250118-Liuhuahugongyuan-Qt-29 0004
+D8	20250118-Liuhuahugongyuan-Xjy-024 0005
+D9	20260725-Guangzhoushiertonggongyuan-Xl-077 008
+E1	20260117-Chuanqigongyuan-Xl-009 006
+E2	20260805-Linjiangdaizhuanggongyuan-Lzk-015 015
+E3	20260725-Guangzhoushiertonggongyuan-Wxx-005 030
+E4	20260724-Tianhegongyuan-Wyj-030 009
+E5	20260801-Yunluozhiwuyuan-Lzk-008 055
+E6	20260119-Luhugongyuan-Xl-K1 030
+E7	20260724-Tianhegongyuan-Xl-033 049
+E8	20251025-Yunxizhiwuyuan-Xl-028 017
+E9	20260725-Tianhegongyuan-Wyj-060 145
+F1	20251025-Yunxizhiwuyuan-Xl-K3 004
+F2	20260117-Chuanqigongyuan-Xl-061 020
+F3	20250221-Yuexiugongyuan-Zwj-67 0009
+F4	20260805-Linjiangdaizhuanggongyuan-Lzk-117 013
+F5	20260724-Tianhegongyuan-Wxx-007 021
+F6	20251025-Yunxizhiwuyuan-Xl-030 065
+F7	20260119-Luhugongyuan-Lzk-092 006
+F8	20250118-Liuhuahugongyuan-Zwj-001 0028
+F9	20250221-Yuexiugongyuan-Zwj-82 0021
+G1	20260805-Linjiangdaizhuanggongyuan-Lzk-065 077
+G2	20260119-Luhugongyuan-Xl-073 008
+G3	20250119-Yuexiugongyuan-Zwj-14 0023
+G4	20260805-Linjiangdaizhuanggongyuan-Lzk-066 037
+G5	20250118-Liuhuahugongyuan-Qt-54 0009
+G6	20250118-Liuhuahugongyuan-Zwj-063 0040
+G7	20250119-Liuhuahugongyuan-Xjy-64 0033
+G8	20260805-Linjiangdaizhuanggongyuan-Lzk-192 020
+G9	20250118-Liuhuahugongyuan-Zwj-055 0023
+H1	20250221-Yuexiugongyuan-Zwj-44 0009
+H2	20251024-Yunxizhiwuyuan-Xl-050 020
+H3	20260725-Guangzhoushiertonggongyuan-Xl-015 037
+H4	20250221-Yuexiugongyuan-Xjy-46 0022
+H5	20260724-Tianhegongyuan-Xl-152 009
+H6	20250120-Yuexiugongyuan-Wyj-06 0106
+H7	20251024-Yunxizhiwuyuan-Xl-061 005
+H8	20250119-Yuexiugongyuan-Xjy-08 0003
+H9	20260117-Chuanqigongyuan-Xl-051 026
+I1	20260725-Guangzhoushiertonggongyuan-Xl-053 029
+I2	20251025-Yunxizhiwuyuan-Wxx-075 037
+I3	20250221-Yuexiugongyuan-Xjy-48-3 0005
+I4	20260711-Ershadaoyishugongyuan-Wxx-014 013
+I5	20260729-Guangzhoushiertonggongyuan-Xl-090 004
+I6	20260724-Tianhegongyuan-Xl-040 020
+I7	20250119-Liuhuahugongyuan-Xjy-36 0005
+I8	20250221-Yuexiugongyuan-Xjy-65-2 0006
+I9	20251025-Yunxizhiwuyuan-Xl-003 090
+J1	20260801-Yunluozhiwuyuan-Lzk-010 029
+J2	20260118-Luhugongyuan-Wxx-041 005
+J3	20260725-Tianhegongyuan-Xl-001 019
+J4	20260724-Tianhegongyuan-Wxx-043 041
+J5	20260729-Guangzhoushiertonggongyuan-Xl-045 009
+J6	20250120-Yuexiugongyuan-Wyj-14 0045
+J7	20250119-Liuhuahugongyuan-Zwj-54 0009
+J8	20260729-Guangzhoushiertonggongyuan-Lzk-026 051
+J9	20260119-Luhugongyuan-Lzk-006 014
+K1	20250221-Yuexiugongyuan-Wxx-103 0016
+K2	20250119-Liuhuahugongyuan-Xjy-27 0013
+K3	20250119-Liuhuahugongyuan-Zwj-26-1 0026
+K4	20260711-Guangzhoufazhangongyuan-Ccy-006 008
+K5	20250119-Liuhuahugongyuan-Zwj-24 0023
+K6	20260725-Guangzhoushiertonggongyuan-Xl-039 009
+K7	20260802-Yunluozhiwuyuan-Wxx-009 015
+K8	20260724-Tianhegongyuan-Xl-114 007
+K9	20260805-Linjiangdaizhuanggongyuan-Lzk-042 047
+L1	20260802-Yuntaigongyuan-Wyj-057 005
+L2	20260805-Linjiangdaizhuanggongyuan-Lzk-179 007
+L3	20260724-Tianhegongyuan-Xl-144 079
+L4	20260805-Linjiangdaizhuanggongyuan-Lzk-021 004
+L5	20250915-Liuhuahugongyuan-Xry-02-2 0006
+L6	20260802-Yunluozhiwuyuan-Wxx-005 013
+L7	20260119-Luhugongyuan-Lzk-023 024
+L8	20260118-Luhugongyuan-Wxx-102 009
+L9	20260805-Linjiangdaizhuanggongyuan-Lzk-084 031
+M1	20250118-Liuhuahugongyuan-Zwj-027-2 0015
+M2	20260725-Guangzhoushiertonggongyuan-Xl-055 015
+M3	20250221-Yuexiugongyuan-Xjy-60 0003
+M4	20260805-Linjiangdaizhuanggongyuan-Lzk-063 062
+M5	20251024-Yunxizhiwuyuan-Xl-K4 013
+M6	20250120-Yuexiugongyuan-Wyj-16 0011
+M7	20250118-Liuhuahugongyuan-Qt-14 0042
+M8	20250221-Yuexiugongyuan-Qt-69 0006
+M9	20250118-Liuhuahugongyuan-Qt-47 0013
