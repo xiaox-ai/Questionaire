@@ -48,7 +48,8 @@ try:
         assert all(v=='' for v in page.evaluate('sheets()[0].rows[1]'))
         page.evaluate("localStorage.setItem('park-survey-static-v1', JSON.stringify({test:'original draft preserved'}))")
         expect(page.locator('#consent')).to_have_count(0)
-        expect(page.locator('header h1')).to_have_text('城市公园场景休闲消费意愿调查')
+        expect(page.locator('header h1')).to_have_count(0)
+        expect(page.locator('.introduction')).to_contain_text('尊敬的参与者：')
         page.locator('#code').fill('C22')
         for group in page.locator('#basicForm fieldset').all()[1:]:
             group.locator('input[type=radio]').first.check()
@@ -59,6 +60,11 @@ try:
         expect(page.locator('#error')).to_contain_text('尚未配置')
         page.locator('#code').fill(' c21 ')
         page.locator('[name=q11]').nth(1).check()
+        boxes=[x.bounding_box() for x in page.locator('#experiences .choices label').all()[:12]]
+        assert len(set(round(b['x']) for b in boxes))==2
+        assert len(set(round(b['y']) for b in boxes))==6
+        for i in range(0,12,2):
+            assert abs(boxes[i]['y']-boxes[i+1]['y'])<1
         page.locator('[name=experience]').nth(0).check()
         page.locator('[name=experience]').last.check()
         page.locator('#other').fill('=1+1 中文体验')
@@ -155,7 +161,10 @@ try:
         left=page.locator('.sticky').bounding_box()
         right=page.locator('.question-panel').bounding_box()
         assert left['x']+left['width'] <= right['x']+1
-        assert left['height'] == 824
+        assert left['height'] == 900
+        assert abs(left['width']-1280*.4)<1
+        expect(page.locator('.video-caption')).to_have_count(0)
+        assert page.locator('td').first.evaluate('(e)=>parseFloat(getComputedStyle(e).fontSize)')==16
         page.locator('#business-35').scroll_into_view_if_needed()
         assert page.locator('.sticky').bounding_box()==left
         page.locator('[name=c13][value=C]').check()
@@ -184,6 +193,12 @@ try:
         expect(page.locator('video#video')).to_be_visible()
         page.locator('#viewMode').click()
         expect(page.locator('#panorama canvas')).to_be_visible()
+        expect(page.get_by_role('slider',name='播放进度')).to_be_visible()
+        expect(page.get_by_role('slider',name='音量')).to_be_visible()
+        page.get_by_role('button',name='开启声音',exact=True).click()
+        assert page.locator('video').evaluate('(v)=>v.muted') is False
+        page.get_by_role('slider',name='音量').fill('0.5')
+        assert page.locator('video').evaluate('(v)=>v.volume')==0.5
         page.locator('#viewMode').click()
         expect(page.locator('video#video')).to_be_visible()
         expect(page.locator('#panorama canvas')).to_have_count(0)
