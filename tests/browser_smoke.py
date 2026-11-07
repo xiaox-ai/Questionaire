@@ -50,6 +50,7 @@ try:
         expect(page.locator('#consent')).to_have_count(0)
         expect(page.locator('header h1')).to_have_count(0)
         expect(page.locator('.introduction')).to_contain_text('尊敬的参与者：')
+        expect(page.locator('.survey-title')).to_have_text('城市公园场景休闲消费意愿调查')
         page.locator('#code').fill('C22')
         for group in page.locator('#basicForm fieldset').all()[1:]:
             group.locator('input[type=radio]').first.check()
@@ -81,6 +82,7 @@ try:
         page.locator('#other').fill('=1+1 中文体验')
         page.get_by_role('button',name='下一步：观看场景').click()
         expect(page.locator('.sticky')).to_contain_text('C2')
+        expect(page.locator('.survey-title')).to_have_count(0)
         for n in range(13,36,2):
             page.locator(f'#business-{n}').scroll_into_view_if_needed()
             page.locator(f'[name=c{n}][value=none]').check()
@@ -212,6 +214,7 @@ try:
         page.locator('#compatibility').click()
         expect(page.locator('#panorama canvas')).to_be_visible()
         expect(page.locator('#compatibility')).to_have_text('标准模式')
+        expect(page.locator('#playerMessage')).to_be_empty()
         if fixture:
             page.wait_for_function('document.querySelector("#panorama canvas").width>1')
             # Read the actual WebGL framebuffer: the generated green video must render.
@@ -223,6 +226,7 @@ try:
         page.locator('#viewMode').click()
         expect(page.locator('video#video')).to_be_visible()
         expect(page.locator('#panorama canvas')).to_have_count(0)
+        expect(page.locator('#playerMessage')).to_be_empty()
         page.locator('#previous').click()
         expect(page.locator('#basicForm')).to_be_visible()
         page.evaluate("Object.defineProperty(navigator,'userAgent',{value:'Mozilla/5.0 (Linux; Android 12; HUAWEI MatePad 11) HuaweiBrowser'});C.videos.A1.mode='360';go('scene',0)")

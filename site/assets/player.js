@@ -24,18 +24,23 @@ window.mountPlayer=function(config){
  video.loop=true;video.play().catch(()=>{});
  host.hidden=true;
  button.onclick=()=>{
- if(active){stop();report('已切换普通视频');return}
+ if(active){stop();report('');return}
  try{
- const T=window.THREE;renderer=new T.WebGLRenderer({antialias:false,powerPreference:'high-performance'});renderer.setPixelRatio(1);host.append(renderer.domElement);
- const scene=new T.Scene(),camera=new T.PerspectiveCamera(75,1,.1,100);geometry=new T.SphereGeometry(10,32,20);geometry.scale(-1,1,1);if(compatible){uploadCanvas=document.createElement('canvas');uploadContext=uploadCanvas.getContext('2d',{alpha:false});if(!uploadContext)throw Error('Canvas unavailable');texture=new T.CanvasTexture(uploadCanvas)}else texture=new T.VideoTexture(video);texture.generateMipmaps=false;texture.minFilter=T.LinearFilter;texture.magFilter=T.LinearFilter;texture.colorSpace=T.SRGBColorSpace;material=new T.MeshBasicMaterial({map:texture});scene.add(new T.Mesh(geometry,material));
+ const T=window.THREE,canvas=document.createElement('canvas');
+ const options={alpha:false,antialias:false,powerPreference:'default'};
+ // WebGL1 avoids some Android tablet WebGL2/video texture driver failures.
+ let context;
+ if(compatible){context=canvas.getContext('webgl',options)||canvas.getContext('experimental-webgl',options);if(!context)throw Error('WebGL1 unavailable')}
+ renderer=new T.WebGLRenderer({canvas,...options,...(context?{context}:{})});renderer.setPixelRatio(1);host.append(renderer.domElement);
+ const scene=new T.Scene(),camera=new T.PerspectiveCamera(75,1,.1,100);geometry=new T.SphereGeometry(10,32,20);geometry.scale(-1,1,1);if(compatible){uploadCanvas=document.createElement('canvas');uploadCanvas.width=1024;uploadCanvas.height=512;uploadContext=uploadCanvas.getContext('2d',{alpha:false});if(!uploadContext)throw Error('Canvas unavailable');texture=new T.CanvasTexture(uploadCanvas)}else texture=new T.VideoTexture(video);texture.generateMipmaps=false;texture.minFilter=T.LinearFilter;texture.magFilter=T.LinearFilter;texture.colorSpace=T.SRGBColorSpace;material=new T.MeshBasicMaterial({map:texture});scene.add(new T.Mesh(geometry,material));
  video.hidden=false;video.classList.add('panorama-source');host.hidden=false;active=true;dirty=true;previousTime=-1;previousDraw=0;button.textContent='普通观看';
  observer=new ResizeObserver(()=>{const w=host.clientWidth,h=host.clientHeight;if(!w||!h)return;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();dirty=true});observer.observe(host);
  host.onpointerdown=e=>{last=[e.clientX,e.clientY];host.setPointerCapture(e.pointerId)};
  host.onpointermove=e=>{if(!last)return;yaw-=(e.clientX-last[0])*.004;pitch=Math.max(-1.4,Math.min(1.4,pitch+(e.clientY-last[1])*.004));last=[e.clientX,e.clientY];dirty=true};host.onpointerup=host.onpointercancel=()=>last=null;
- const draw=now=>{if(!active)return;try{if(!document.hidden&&(dirty||(!video.paused&&video.currentTime!==previousTime))&&now-previousDraw>=1000/30){camera.lookAt(Math.sin(yaw)*Math.cos(pitch),Math.sin(pitch),-Math.cos(yaw)*Math.cos(pitch));if(video.readyState<2){frame=requestAnimationFrame(draw);return}if(uploadCanvas){const limit=Math.min(2048,renderer.capabilities.maxTextureSize),scale=Math.min(1,limit/video.videoWidth,limit/video.videoHeight),w=Math.max(1,Math.round(video.videoWidth*scale)),h=Math.max(1,Math.round(video.videoHeight*scale));if(uploadCanvas.width!==w||uploadCanvas.height!==h){uploadCanvas.width=w;uploadCanvas.height=h}uploadContext.drawImage(video,0,0,w,h);texture.needsUpdate=true}else if(video.videoWidth>renderer.capabilities.maxTextureSize||video.videoHeight>renderer.capabilities.maxTextureSize){compatible=true;stop();button.click();return}renderer.render(scene,camera);previousTime=video.currentTime;previousDraw=now;dirty=false}frame=requestAnimationFrame(draw)}catch{stop();report('全景渲染失败，可切换兼容模式或普通观看；也请检查视频跨域设置。')}};frame=requestAnimationFrame(draw);report('拖动调整视角；仅适用于360°等距柱状全景素材。');
+ const draw=now=>{if(!active)return;try{if(!document.hidden&&(dirty||(!video.paused&&video.currentTime!==previousTime))&&now-previousDraw>=1000/30){camera.lookAt(Math.sin(yaw)*Math.cos(pitch),Math.sin(pitch),-Math.cos(yaw)*Math.cos(pitch));if(video.readyState<2){frame=requestAnimationFrame(draw);return}if(uploadCanvas){uploadContext.drawImage(video,0,0,uploadCanvas.width,uploadCanvas.height);texture.needsUpdate=true}else if(video.videoWidth>renderer.capabilities.maxTextureSize||video.videoHeight>renderer.capabilities.maxTextureSize){compatible=true;stop();button.click();return}renderer.render(scene,camera);previousTime=video.currentTime;previousDraw=now;dirty=false}frame=requestAnimationFrame(draw)}catch{stop();report('全景渲染失败，可切换兼容模式或普通观看；也请检查视频跨域设置。')}};frame=requestAnimationFrame(draw);report('');
  }catch{stop();report('全景模式不可用，请使用普通视频观看。')}
  };
- compatibility.onclick=()=>{compatible=!compatible;compatibility.textContent=compatible?'标准模式':'兼容模式';if(active){stop();button.click()}};
+ compatibility.onclick=()=>{compatible=!compatible;compatibility.textContent=compatible?'标准模式':'兼容模式';if(active)stop();button.click()};
  document.querySelector('#fullVideo').onclick=()=>{const el=video.parentElement;if(el.requestFullscreen)el.requestFullscreen().catch(()=>report('当前设备不支持全屏'))};
  if(config.mode==='360')button.click();
 };
