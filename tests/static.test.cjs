@@ -58,3 +58,7 @@ assert.throws(()=>context.window.parseVideoCSV('视频编号,视频名称,视频
 assert.throws(()=>context.window.parseVideoCSV('视频编号,视频名称,视频链接\nA1,x,\nA1,y,'));
 console.log('PASS: CSV BOM, Excel quoting, URLs, modes, empty and duplicate entries.');
 
+
+const annotated=context.window.parseVideoCSV('视频编号,视频名称,视频链接,播放模式,标注\nC1,公园,https://example.com/video.mp4,360,场景气味：弱草木味\n');
+assert.equal(annotated.C1.annotation,'场景气味：弱草木味');
+assert.equal(flatFixture.A1.annotation,'');

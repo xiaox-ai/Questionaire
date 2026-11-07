@@ -190,8 +190,10 @@ try:
         # Exercise the new MP4 branch and Three.js lifecycle without external video.
         fixture=os.environ.get('TEST_VIDEO')
         ctx.route('https://example.com/**', lambda route:route.fulfill(status=200,content_type='video/mp4',body=Path(fixture).read_bytes() if fixture else b''))
-        page.evaluate("C.videos.A1.url='https://example.com/test.mp4';C.videos.A1.mode='flat';state.code='A1';state.scenes={A1:{answers:Object.fromEntries(C.businesses.map(([n])=>[n,{choice:'',frequency:'',status:'missing'}]))}};go('scene',0)")
+        page.evaluate("C.videos.A1.url='https://example.com/test.mp4';C.videos.A1.mode='flat';C.videos.A1.annotation='场景气味：弱草木味 <测试>';state.code='A1';state.scenes={A1:{answers:Object.fromEntries(C.businesses.map(([n])=>[n,{choice:'',frequency:'',status:'missing'}]))}};go('scene',0)")
         expect(page.locator('video#video')).to_be_visible()
+        expect(page.locator('.scene-annotation')).to_have_text('场景气味：弱草木味 <测试>')
+        assert page.locator('video').evaluate('(v)=>v.loop')
         page.locator('#viewMode').click()
         expect(page.locator('#panorama canvas')).to_be_visible()
         expect(page.get_by_role('slider',name='播放进度')).to_be_visible()
@@ -207,6 +209,15 @@ try:
             assert page.locator('video').evaluate('(v)=>v.paused')
             page.get_by_role('button',name='播放',exact=True).click()
             page.wait_for_function('!document.querySelector("video").paused')
+        page.locator('#compatibility').click()
+        expect(page.locator('#panorama canvas')).to_be_visible()
+        expect(page.locator('#compatibility')).to_have_text('标准模式')
+        if fixture:
+            page.wait_for_function('document.querySelector("#panorama canvas").width>1')
+            # Read the actual WebGL framebuffer: the generated green video must render.
+            page.wait_for_function('''() => {const c=document.querySelector('#panorama canvas'),g=c.getContext('webgl2')||c.getContext('webgl');const p=new Uint8Array(4);g.readPixels(c.width/2,c.height/2,1,1,g.RGBA,g.UNSIGNED_BYTE,p);return p[1]>20}''')
+            page.locator('video').evaluate('(v)=>{v.currentTime=v.duration-.2;v.play()}')
+            page.wait_for_function('document.querySelector("video").currentTime<1')
         page.get_by_role('slider',name='音量').fill('0.5')
         assert page.locator('video').evaluate('(v)=>v.volume')==0.5
         page.locator('#viewMode').click()
@@ -214,6 +225,9 @@ try:
         expect(page.locator('#panorama canvas')).to_have_count(0)
         page.locator('#previous').click()
         expect(page.locator('#basicForm')).to_be_visible()
+        page.evaluate("Object.defineProperty(navigator,'userAgent',{value:'Mozilla/5.0 (Linux; Android 12; HUAWEI MatePad 11) HuaweiBrowser'});C.videos.A1.mode='360';go('scene',0)")
+        expect(page.locator('#compatibility')).to_have_text('标准模式')
+        expect(page.locator('#panorama canvas')).to_be_visible()
         assert not errors,errors
         browser.close()
     print('PASS: project subpath, full mobile/desktop flow, all 36 questions, skips, separate scenes, return/edit, restore, XLSX download/readback, local Excel save and recovery of old pending drafts. Video mocked; file:// not tested (managed Chromium blocks it).')
