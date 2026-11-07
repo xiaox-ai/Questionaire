@@ -188,8 +188,9 @@ try:
         assert not errors,errors
         assert json.loads(page.evaluate("localStorage.getItem('park-survey-static-v1')"))=={'test':'original draft preserved'}
         # Exercise the new MP4 branch and Three.js lifecycle without external video.
-        ctx.route('https://example.com/**', lambda route:route.fulfill(status=200,content_type='video/mp4',body=''))
-        page.evaluate("C.videos.A1.url='https://example.com/test.mp4';state.code='A1';state.scenes={A1:{answers:Object.fromEntries(C.businesses.map(([n])=>[n,{choice:'',frequency:'',status:'missing'}]))}};go('scene',0)")
+        fixture=os.environ.get('TEST_VIDEO')
+        ctx.route('https://example.com/**', lambda route:route.fulfill(status=200,content_type='video/mp4',body=Path(fixture).read_bytes() if fixture else b''))
+        page.evaluate("C.videos.A1.url='https://example.com/test.mp4';C.videos.A1.mode='flat';state.code='A1';state.scenes={A1:{answers:Object.fromEntries(C.businesses.map(([n])=>[n,{choice:'',frequency:'',status:'missing'}]))}};go('scene',0)")
         expect(page.locator('video#video')).to_be_visible()
         page.locator('#viewMode').click()
         expect(page.locator('#panorama canvas')).to_be_visible()
@@ -197,6 +198,15 @@ try:
         expect(page.get_by_role('slider',name='音量')).to_be_visible()
         page.get_by_role('button',name='开启声音',exact=True).click()
         assert page.locator('video').evaluate('(v)=>v.muted') is False
+        if fixture:
+            page.wait_for_function('Number.isFinite(document.querySelector("video").duration)')
+            page.get_by_role('slider',name='播放进度').fill('50')
+            page.wait_for_function('document.querySelector("video").currentTime>1')
+            if not page.locator('video').evaluate('(v)=>v.paused'):
+                page.get_by_role('button',name='暂停',exact=True).click()
+            assert page.locator('video').evaluate('(v)=>v.paused')
+            page.get_by_role('button',name='播放',exact=True).click()
+            page.wait_for_function('!document.querySelector("video").paused')
         page.get_by_role('slider',name='音量').fill('0.5')
         assert page.locator('video').evaluate('(v)=>v.volume')==0.5
         page.locator('#viewMode').click()
