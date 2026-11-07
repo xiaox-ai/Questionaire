@@ -1,5 +1,6 @@
 """Optional browser regression; Python/Playwright only used as test tooling, not app runtime."""
 import json
+import re
 import os
 from pathlib import Path
 import socket
@@ -123,10 +124,19 @@ try:
         expect(page.get_by_role('heading',name='问卷填写完成')).to_be_visible()
         page.reload()
         expect(page.get_by_role('heading',name='问卷填写完成')).to_be_visible()
+        saved_survey=page.evaluate('JSON.stringify(state)')
+        assert page.evaluate("downloadFilename(new Date('2026-11-07T08:36:00Z'))")== 'C21_202611071636.xlsx'
         with page.expect_download() as event:
             page.locator('#download').click()
         downloaded=Path(event.value.path())
-        assert event.value.suggested_filename.endswith('.xlsx')
+        assert re.fullmatch(r'C21_\d{12}\.xlsx',event.value.suggested_filename)
+        expect(page.locator('#basicForm')).to_be_visible()
+        expect(page.locator('#code')).to_have_value('')
+        assert page.locator('#basicForm input:checked').count()==0
+        reset=page.evaluate("JSON.parse(localStorage.getItem('park-survey-static-v2'))")
+        assert reset['scenes']=={} and reset['basic']=={} and reset['code']==''
+        page.reload()
+        expect(page.locator('#code')).to_have_value('')
         with zipfile.ZipFile(downloaded) as z:
             assert z.testzip() is None
             for name in z.namelist():
@@ -157,6 +167,9 @@ try:
             print('PASS: independent openpyxl XLSX reader')
         except ImportError:
             print('openpyxl not installed; ZIP CRC/XML and exported values verified')
+        # Restore test fixture to exercise editing independently of the reset.
+        page.evaluate("s=>localStorage.setItem('park-survey-static-v2',s)",saved_survey)
+        page.reload()
         page.set_viewport_size({'width':1280,'height':900})
         page.locator('#edit').click()
         expect(page.locator('[name=c13][value=none]')).to_be_checked()
@@ -172,6 +185,7 @@ try:
         page.locator('[name=c13][value=C]').check()
         page.locator('[name=f13]').first.check()
         page.get_by_role('button',name='完成问卷',exact=True).click()
+        modified_survey=page.evaluate('JSON.stringify(state)')
         with page.expect_download() as event:
             page.locator('#download').click()
         with zipfile.ZipFile(event.value.path()) as z:
@@ -179,6 +193,8 @@ try:
             record=dict(zip(*modified))
             assert record['C1｜13. 在该公园场景下，您愿意选择哪个休闲消费方案？（演艺观赏服务）']=='3'
             assert record['C1｜14. 针对您刚选择的休闲消费方案，您预估的消费频次是？（演艺观赏服务）']=='1'
+        expect(page.locator('#basicForm')).to_be_visible()
+        page.evaluate("s=>localStorage.setItem('park-survey-static-v2',s)",modified_survey)
         # Old pending cloud drafts must become editable/downloadable without loss.
         page.evaluate("const s=JSON.parse(localStorage.getItem('park-survey-static-v2'));s.submissionSnapshot={submissionId:s.id};localStorage.setItem('park-survey-static-v2',JSON.stringify(s))")
         page.reload()
