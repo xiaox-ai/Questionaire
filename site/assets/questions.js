@@ -2,10 +2,7 @@
 window.SURVEY = {
  version: '2026-10-29-v2',
  title: '城市公园场景休闲消费意愿调查',
- videos: {
-  C1: {title:'公园场景 C1',url:'https://good360vr.com/preview/?id=2115482624883'},
-  C2: {title:'公园场景 C2',url:'https://good360vr.com/preview/?id=2115482624883'}
- },
+ videos: {}, // Loaded from videos.csv before restoring the questionnaire.
  basic: [
   [2,'年龄',['18-25岁','26-35岁','36-45岁','46-59岁']],
   [3,'性别',['男','女']],

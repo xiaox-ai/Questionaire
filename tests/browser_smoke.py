@@ -85,7 +85,8 @@ try:
         expect(page.locator('.styles strong')).to_have_count(3)
         assert 'autoplay=1' in page.locator('#video').get_attribute('src')
         assert 'autoplay' in page.locator('#video').get_attribute('allow')
-        assert page.locator('#video').bounding_box()['height'] >= 844*.46-1
+        assert page.locator('#video').bounding_box()['height'] >= 180
+        assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
         boxes=[x.bounding_box() for x in page.locator('#follow-13 label').all()]
         assert len(set(round(b['y']) for b in boxes))==2
         boxes=[x.bounding_box() for x in page.locator('#business-13 > .choices label').all()]
@@ -151,6 +152,12 @@ try:
         page.set_viewport_size({'width':1280,'height':900})
         page.locator('#edit').click()
         expect(page.locator('[name=c13][value=none]')).to_be_checked()
+        left=page.locator('.sticky').bounding_box()
+        right=page.locator('.question-panel').bounding_box()
+        assert left['x']+left['width'] <= right['x']+1
+        assert left['height'] == 824
+        page.locator('#business-35').scroll_into_view_if_needed()
+        assert page.locator('.sticky').bounding_box()==left
         page.locator('[name=c13][value=C]').check()
         page.locator('[name=f13]').first.check()
         page.get_by_role('button',name='完成问卷',exact=True).click()
@@ -171,6 +178,18 @@ try:
         assert not any('/api/' in r for r in requests)
         assert not errors,errors
         assert json.loads(page.evaluate("localStorage.getItem('park-survey-static-v1')"))=={'test':'original draft preserved'}
+        # Exercise the new MP4 branch and Three.js lifecycle without external video.
+        ctx.route('https://example.com/**', lambda route:route.fulfill(status=200,content_type='video/mp4',body=''))
+        page.evaluate("C.videos.A1.url='https://example.com/test.mp4';state.code='A1';state.scenes={A1:{answers:Object.fromEntries(C.businesses.map(([n])=>[n,{choice:'',frequency:'',status:'missing'}]))}};go('scene',0)")
+        expect(page.locator('video#video')).to_be_visible()
+        page.locator('#viewMode').click()
+        expect(page.locator('#panorama canvas')).to_be_visible()
+        page.locator('#viewMode').click()
+        expect(page.locator('video#video')).to_be_visible()
+        expect(page.locator('#panorama canvas')).to_have_count(0)
+        page.locator('#previous').click()
+        expect(page.locator('#basicForm')).to_be_visible()
+        assert not errors,errors
         browser.close()
     print('PASS: project subpath, full mobile/desktop flow, all 36 questions, skips, separate scenes, return/edit, restore, XLSX download/readback, local Excel save and recovery of old pending drafts. Video mocked; file:// not tested (managed Chromium blocks it).')
 finally:

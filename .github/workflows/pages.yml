@@ -23,6 +23,8 @@ jobs:
           node --check site/assets/questions.js
           node --check site/assets/excel.js
           node --check site/assets/app.js
+          node --check site/assets/videos.js
+          node --check site/assets/player.js
           node tests/static.test.cjs
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
