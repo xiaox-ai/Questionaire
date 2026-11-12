@@ -219,7 +219,10 @@ try:
         expect(page.locator('#panorama canvas')).to_be_visible()
         expect(page.get_by_role('slider',name='播放进度')).to_be_visible()
         expect(page.get_by_role('slider',name='音量')).to_be_visible()
-        page.get_by_role('button',name='开启声音',exact=True).click()
+        expect(page.locator('#fullVideo')).to_have_count(0)
+        expect(page.locator('#rotationResume')).to_have_count(0)
+        expect(page.locator('#autoRotate')).to_have_text('环视开')
+        expect(page.get_by_role('button',name='静音',exact=True)).to_be_visible()
         assert page.locator('video').evaluate('(v)=>v.muted') is False
         if fixture:
             page.wait_for_function('Number.isFinite(document.querySelector("video").duration)')
@@ -241,7 +244,6 @@ try:
             page.wait_for_timeout(250)
             assert page.evaluate('window.testYaw')==paused
             page.locator('video').evaluate('(v)=>v.play()')
-            page.locator('#rotationResume').select_option('hold')
             box=page.locator('#panorama').bounding_box()
             page.mouse.move(box['x']+box['width']/2,box['y']+box['height']/2)
             page.mouse.down()
@@ -251,8 +253,7 @@ try:
             held=page.evaluate('window.testYaw')
             page.wait_for_timeout(250)
             assert page.evaluate('window.testYaw')==held
-            page.locator('#rotationResume').select_option('resume')
-            page.wait_for_function('(before)=>Math.abs(window.testYaw-before)>.005',arg=held,timeout=8000)
+            page.wait_for_function('(before)=>Math.abs(window.testYaw-before)>.005',arg=held,timeout=5000)
             page.locator('#autoRotate').click()
             expect(page.locator('#autoRotate')).to_have_attribute('aria-pressed','false')
             page.wait_for_timeout(100)
