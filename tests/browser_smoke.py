@@ -39,6 +39,7 @@ try:
         browser=p.chromium.launch(executable_path=os.environ.get('CHROMIUM_PATH','/usr/bin/chromium'),headless=True,args=['--no-sandbox'])
         ctx=browser.new_context(viewport={'width':390,'height':844},accept_downloads=True)
         ctx.route('https://good360vr.com/**',lambda route:route.fulfill(status=200,content_type='text/html',body='<p>测试占位视频</p>'))
+        ctx.route('**/videos.csv',lambda route:route.fulfill(status=200,content_type='text/csv',body='视频编号,视频名称,视频链接,播放模式,标注\nA1,测试视频,https://example.com/test.mp4,flat,\nC1,测试场景1,https://good360vr.com/preview/?id=2115482624883,iframe,\nC2,测试场景2,https://good360vr.com/preview/?id=2115482624883,iframe,\n'))
         page=ctx.new_page()
         errors=[]
         requests=[]
@@ -51,6 +52,7 @@ try:
         expect(page.locator('#consent')).to_have_count(0)
         expect(page.locator('header h1')).to_have_count(0)
         expect(page.locator('.introduction')).to_contain_text('尊敬的参与者：')
+        assert '请跳至第13题' not in page.locator('#basicForm').inner_text()
         expect(page.locator('.survey-title')).to_have_text('城市公园场景休闲消费意愿调查')
         page.locator('#code').fill('C22')
         for group in page.locator('#basicForm fieldset').all()[1:]:
@@ -212,6 +214,7 @@ try:
         expect(page.locator('video#video')).to_be_visible()
         expect(page.locator('.scene-annotation')).to_have_text('场景气味：弱草木味 <测试>')
         assert page.locator('video').evaluate('(v)=>v.loop')
+        page.evaluate("()=>{const original=THREE.PerspectiveCamera.prototype.lookAt;THREE.PerspectiveCamera.prototype.lookAt=function(x,y,z){window.testYaw=Math.atan2(x,-z);return original.call(this,x,y,z)}}")
         page.locator('#viewMode').click()
         expect(page.locator('#panorama canvas')).to_be_visible()
         expect(page.get_by_role('slider',name='播放进度')).to_be_visible()
@@ -227,6 +230,42 @@ try:
             assert page.locator('video').evaluate('(v)=>v.paused')
             page.get_by_role('button',name='播放',exact=True).click()
             page.wait_for_function('!document.querySelector("video").paused')
+        expect(page.locator('#autoRotate')).to_have_attribute('aria-pressed','true')
+        if fixture:
+            page.wait_for_function('typeof window.testYaw==="number"')
+            initial=page.evaluate('window.testYaw')
+            page.wait_for_function('(before)=>Math.abs(window.testYaw-before)>.005',arg=initial)
+            page.locator('video').evaluate('(v)=>v.pause()')
+            page.wait_for_timeout(100)
+            paused=page.evaluate('window.testYaw')
+            page.wait_for_timeout(250)
+            assert page.evaluate('window.testYaw')==paused
+            page.locator('video').evaluate('(v)=>v.play()')
+            page.locator('#rotationResume').select_option('hold')
+            box=page.locator('#panorama').bounding_box()
+            page.mouse.move(box['x']+box['width']/2,box['y']+box['height']/2)
+            page.mouse.down()
+            page.mouse.move(box['x']+box['width']/2+30,box['y']+box['height']/2,steps=4)
+            page.mouse.up()
+            page.wait_for_timeout(150)
+            held=page.evaluate('window.testYaw')
+            page.wait_for_timeout(250)
+            assert page.evaluate('window.testYaw')==held
+            page.locator('#rotationResume').select_option('resume')
+            page.wait_for_function('(before)=>Math.abs(window.testYaw-before)>.005',arg=held,timeout=8000)
+            page.locator('#autoRotate').click()
+            expect(page.locator('#autoRotate')).to_have_attribute('aria-pressed','false')
+            page.wait_for_timeout(100)
+            off=page.evaluate('window.testYaw')
+            page.wait_for_timeout(250)
+            assert page.evaluate('window.testYaw')==off
+            page.locator('#autoRotate').click()
+        # Panorama must cover the source video all the way to the bottom on mobile.
+        page.set_viewport_size({'width':390,'height':844})
+        host=page.locator('#panorama').bounding_box()
+        source=page.locator('video').bounding_box()
+        assert abs(host['y']+host['height']-source['y']-source['height'])<2
+        assert page.locator('.video-controls').evaluate('(e)=>getComputedStyle(e).backgroundColor')=='rgb(20, 39, 31)'
         page.locator('#compatibility').click()
         expect(page.locator('#panorama canvas')).to_be_visible()
         expect(page.locator('#compatibility')).to_have_text('标准模式')
